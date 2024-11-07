@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Set the location for your OWASP Dependency-Check HTML report
-        DEPENDENCY_CHECK_HTML_REPORT = 'target/dependency-check-report/index.html'
+        DEPENDENCY_CHECK_HTML_REPORT = 'alpha/storefile'
     }
 
     stages {
@@ -25,13 +25,12 @@ pipeline {
 
         stage('Archive and Publish HTML Report') {
             steps {
-                // Archive the Dependency-Check HTML report as a build artifact
-                archiveArtifacts artifacts: 'target/dependency-check-report/index.html', allowEmptyArchive: true
+                
 
                 // Publish the HTML report to Jenkins
                 publishHTML(target: [
                     reportName: 'OWASP Dependency-Check Report',
-                    reportDir: 'target/dependency-check-report',
+                    reportDir: 'alpha/storefile',
                     reportFiles: 'index.html',
                     alwaysLinkToLastBuild: false
                 ])
