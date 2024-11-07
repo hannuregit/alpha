@@ -7,12 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the code from the repository
-                checkout scm
-            }
-        }
+        
 
         stage('Run OWASP Dependency-Check') {
             steps {
