@@ -1,11 +1,10 @@
 pipeline {
     agent any
-
     stages {
-        stage('SCA') {
+        stage('Check Path') {
             steps {
-                dependencyCheck additionalArguments: '', odcInstallation: 'OWASP-Dependency-Scan'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                sh 'which dependency-check'  // Linux
+                bat 'where dependency-check'  // Windows
             }
         }
     }
