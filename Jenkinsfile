@@ -1,10 +1,7 @@
 pipeline {
     agent any
 
-    tools {
-        // Make sure to define ZAP as a tool in your pipeline
-        zap 'ZAP'  // Replace 'ZAP' with the name you used in Global Tool Configuration
-    }
+   
     
     stages {
         stage('DAST - OWASP ZAP Scan') {
