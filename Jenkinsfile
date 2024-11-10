@@ -2,25 +2,28 @@ pipeline {
     agent any
 
     stages {
-        stage('DAST - OWASP ZAP Scan') {
+        stage('Dependency Check') {
             steps {
-                echo 'Running DAST with OWASP ZAP Docker container...'
+                echo 'Running OWASP Dependency-Check...'
 
-                // Run OWASP ZAP using Docker
+                // Run OWASP Dependency-Check using Docker
                 sh '''
-                docker run -d --name zap -p 8080:8080 owasp/zap2docker-stable
-                docker exec zap zap-cli start --daemon
-                docker exec zap zap-cli active-scan http://172.27.210.185:8080/  # Replace with your app URL
-                docker exec zap zap-cli report -o ${WORKSPACE}/zap_report.html
-                docker stop zap
+                sudo docker run --rm -v $(pwd):/src -v $(pwd)/odc-report:/report owasp/dependency-check \
+                --scan /src --format HTML --out /report/dependency-check-report.html
                 '''
             }
         }
 
-        stage('Clean Up') {
+        stage('Publish Dependency Check Report') {
             steps {
-                echo 'Cleaning up...'
-                // Add any clean-up steps if necessary
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'odc-report',
+                    reportFiles: 'dependency-check-report.html',
+                    reportName: 'OWASP Dependency Check Report'
+                ])
             }
         }
     }
