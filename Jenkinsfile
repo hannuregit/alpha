@@ -1,20 +1,18 @@
 pipeline {
     agent any
 
-  
-
     stages {
         stage('DAST - OWASP ZAP Scan') {
             steps {
-                echo 'Running DAST with OWASP ZAP...'
+                echo 'Running DAST with OWASP ZAP Docker container...'
 
-                // Run OWASP ZAP security scan using the ZAP CLI
-                // You can replace the ZAP URL and parameters accordingly
+                // Run OWASP ZAP using Docker
                 sh '''
-                zap-cli start --daemon  # Start ZAP in daemon mode
-                zap-cli active-scan http://172.27.210.185:8080/  # Run active scan on your app URL
-                zap-cli report -o ${WORKSPACE}/zap_report.html  # Save the report to the Jenkins workspace
-                zap-cli stop  # Stop ZAP after scan
+                docker run -d --name zap -p 8080:8080 owasp/zap2docker-stable
+                docker exec zap zap-cli start --daemon
+                docker exec zap zap-cli active-scan http://172.27.210.185:8080/  # Replace with your app URL
+                docker exec zap zap-cli report -o ${WORKSPACE}/zap_report.html
+                docker stop zap
                 '''
             }
         }
