@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+     environment {
+        SNYK_TOKEN = 'app.snyk.io/org/hannuregit'  // Provide your Snyk token here
+    }
+
     
     stages {
         stage('Snyk Security Scan') {
