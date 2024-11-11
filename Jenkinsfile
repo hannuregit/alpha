@@ -1,20 +1,31 @@
 pipeline {
     agent any
 
-     environment {
-        SNYK_TOKEN = 'app.snyk.io/org/hannuregit'  // Provide your Snyk token here
+    environment {
+        SNYK_TOKEN = 'app.snyk.io/org/hannuregit' 
+        PROJECT_PATH = '/var/lib/jenkins/workspace/Alpha'  // Set project directory path
     }
 
-    
     stages {
-        stage('Snyk Security Scan') {
+        stage('Checkout') {
             steps {
-                snykSecurity(
-                    snykInstallation: 'Snyk@latest',
-                    severity: 'high',                 // Set severity threshold for issues (e.g., 'low', 'medium', 'high')
-                    failOnIssues: true,               // Fail build if issues are found
-                    monitorProjectOnBuild: true       // Monitor the project on Snyk (adds it to Snyk dashboard)
-                )
+                git 'https://your-repository-url.git'
+            }
+        }
+
+        stage('Snyk Scan') {
+            steps {
+                script {
+                    // Use environment variable to specify directory
+                    dir("${env.PROJECT_PATH}") {
+                        snykSecurity(
+                            snykInstallation: 'Snyk',
+                            failOnIssues: true,
+                            monitor: true,
+                            test: true
+                        )
+                    }
+                }
             }
         }
     }
