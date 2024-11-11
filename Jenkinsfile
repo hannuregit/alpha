@@ -13,9 +13,7 @@ pipeline {
                     dir("${env.PROJECT_PATH}") {
                         snykSecurity(
                             snykInstallation: 'Snyk',  // Ensure Snyk is configured in Global Tool Config
-                            failOnIssues: true,
-                            monitor: true,
-                            test: true
+                            failOnIssues: true
                         )
                     }
                 }
