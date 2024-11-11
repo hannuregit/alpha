@@ -1,29 +1,17 @@
 pipeline {
     agent any
 
+    
     stages {
-        stage('Dependency Check') {
+        stage('Snyk Security Scan') {
             steps {
-                echo 'Running OWASP Dependency-Check...'
-
-                // Run OWASP Dependency-Check using Docker
-                sh '''
-                sudo docker run --rm -v $(pwd):/src -v $(pwd)/odc-report:/report owasp/dependency-check \
-                --scan /src --format HTML --out /report/dependency-check-report.html
-                '''
-            }
-        }
-
-        stage('Publish Dependency Check Report') {
-            steps {
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'odc-report',
-                    reportFiles: 'dependency-check-report.html',
-                    reportName: 'OWASP Dependency Check Report'
-                ])
+                snykSecurity(
+                    organization: 'your-org-name',   // Optional: specify your Snyk organization
+                    projectName: 'your-project-name', // Optional: name the project in Snyk
+                    severity: 'high',                 // Set severity threshold for issues (e.g., 'low', 'medium', 'high')
+                    failOnIssues: true,               // Fail build if issues are found
+                    monitorProjectOnBuild: true       // Monitor the project on Snyk (adds it to Snyk dashboard)
+                )
             }
         }
     }
